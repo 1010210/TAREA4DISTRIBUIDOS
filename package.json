@@ -1,0 +1,11 @@
+
+{
+  "name": "tarea-03",
+  "version": "1.0.0",
+  "description": "Tarea 3",
+  "author": "Trei Leon",
+  "license": "Unlicense",
+  "dependencies": {
+    "mongodb": "latest"
+  }
+}

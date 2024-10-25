@@ -1,22 +1,21 @@
 "use strict"
 
-const clientPromise = require('./mongoDB');
 const headers = require('./headersCORS');
 
+const rabbitPromise = require('./rabbitMQ');
 
 exports.handler = async (event, context) => {
 
-
   if (event.httpMethod == "OPTIONS") {
-    return { statusCode: 200, headers, body: "OK" };
+    return {statusCode: 200, headers, body: "OK"};
   }
-  try {
-    const client = await clientPromise;
-    const id = parseInt(event.path.split("/").reverse()[0]);
-    const data = JSON.parse(event.body);
-	console.log(event.body)
 
-    await client.db("bookstore").collection("publishers").updateOne({_id:id},{$set:data});
+  try {
+    const id = parseInt(event.path.split("/").reverse()[0]);
+
+    const channel = await rabbitPromise();
+    const request = `{"method":"UPDATE","id":${id},"body":${event.body}}`;
+    await channel.sendToQueue("publisher", Buffer.from(request)); // Cambiado a 'publisher'
 
     return { statusCode: 200, headers, body: 'OK'};
   } catch (error) {

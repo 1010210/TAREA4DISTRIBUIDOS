@@ -1,23 +1,25 @@
 "use strict"
 
-const clientPromise = require('./mongoDB');
 const headers = require('./headersCORS');
+
+const rabbitPromise = require('./rabbitMQ');
 
 exports.handler = async (event, context) => {
 
   if (event.httpMethod == "OPTIONS") {
-    return { statusCode: 200, headers, body: "OK" };
+    return {statusCode: 200,headers,body: "OK"};
   }
-	
+
   try {
-    const client = await clientPromise;
     const id = parseInt(event.path.split("/").reverse()[0]);
-	
-    await client.db("bookstore").collection("publishers").deleteOne({_id:id});
-	
-    return { statusCode: 200, headers, body: 'OK'};
+
+    const channel = await rabbitPromise();
+    const request = `{"method":"DELETE","id": ${id} }`;
+    await channel.sendToQueue("publisher", Buffer.from(request)); // Cambiado a 'publisher'
+
+    return {statusCode: 200,headers,body: "Deleted publisher"}; // Actualiza el mensaje de retorno
   } catch (error) {
     console.log(error);
-    return { statusCode: 422, headers, body: JSON.stringify(error) };
+    return {statusCode: 422,headers,body: JSON.stringify(error)};
   }
 };

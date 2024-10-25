@@ -6,7 +6,7 @@
   "author": "Trei Leon",
   "license": "Unlicense",
   "dependencies": {
-    "mongodb": "latest"
+    "mongodb": "latest",
     "amqplib": "latest"
   }
 }

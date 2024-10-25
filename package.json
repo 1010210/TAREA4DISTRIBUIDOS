@@ -7,5 +7,6 @@
   "license": "Unlicense",
   "dependencies": {
     "mongodb": "latest"
+    "amqplib": "latest"
   }
 }
